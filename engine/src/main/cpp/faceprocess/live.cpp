@@ -2,7 +2,7 @@
 // Created by yuanhao on 20-6-12.
 //
 
-#include <opencv2/imgproc.hpp>
+#include "opencv2/imgproc.hpp"
 #include "live.h"
 #include "../android_log.h"
 
@@ -37,7 +37,7 @@ int Live::LoadModel(AAssetManager *assetManager, std::vector<ModelConfig> &confi
 
         ret = net->load_model(assetManager, model.c_str());
         if (ret != 0) {
-            LOG_ERR("LiveBody load model failed.");
+//            LOG_ERR("LiveBody load model failed.");
             return -2 * (i + 1);
         }
         nets_.emplace_back(net);

@@ -5,9 +5,10 @@
 #ifndef LIVEBODYEXAMPLE_LIVE_H
 #define LIVEBODYEXAMPLE_LIVE_H
 
-#include <opencv2/core/mat.hpp>
-#include "../include/ncnn/net.h"
-#include "../definition.h"
+#include "opencv2/core/mat.hpp"
+#include "ncnn/net.h"
+
+#include "definition.h"
 
 class Live {
 public:

@@ -4,7 +4,7 @@
 
 #include <android/asset_manager_jni.h>
 #include "jni_long_field.h"
-#include "live/live.h"
+#include "faceprocess/live.h"
 #include "android_log.h"
 #include "img_process.h"
 
