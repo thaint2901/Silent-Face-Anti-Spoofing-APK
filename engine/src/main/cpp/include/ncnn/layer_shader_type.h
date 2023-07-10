@@ -17,12 +17,11 @@
 
 namespace ncnn {
 
-namespace LayerShaderType {
-enum LayerShaderType
-{
+    namespace LayerShaderType {
+        enum LayerShaderType {
 #include "layer_shader_type_enum.h"
-};
-} // namespace LayerShaderType
+        };
+    } // namespace LayerType
 
 } // namespace ncnn
 

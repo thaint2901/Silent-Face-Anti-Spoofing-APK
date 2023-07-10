@@ -15,107 +15,85 @@
 #ifndef NCNN_DATAREADER_H
 #define NCNN_DATAREADER_H
 
-#include "platform.h"
-#if NCNN_STDIO
 #include <stdio.h>
-#endif
+#include "platform.h"
 
-#if NCNN_PLATFORM_API
 #if __ANDROID_API__ >= 9
 #include <android/asset_manager.h>
 #endif
-#endif // NCNN_PLATFORM_API
 
 namespace ncnn {
 
 // data read wrapper
-class NCNN_EXPORT DataReader
-{
-public:
-    DataReader();
-    virtual ~DataReader();
+    class DataReader {
+    public:
+        virtual ~DataReader();
 
 #if NCNN_STRING
-    // parse plain param text
-    // return 1 if scan success
-    virtual int scan(const char* format, void* p) const;
+
+        // parse plain param text
+        // return 1 if scan success
+        virtual int scan(const char *format, void *p) const;
+
 #endif // NCNN_STRING
 
-    // read binary param and model data
-    // return bytes read
-    virtual size_t read(void* buf, size_t size) const;
-
-    // get model data reference
-    // return bytes referenced
-    virtual size_t reference(size_t size, const void** buf) const;
-};
+        // read binary param and model data
+        // return bytes read
+        virtual size_t read(void *buf, size_t size) const;
+    };
 
 #if NCNN_STDIO
-class DataReaderFromStdioPrivate;
-class NCNN_EXPORT DataReaderFromStdio : public DataReader
-{
-public:
-    explicit DataReaderFromStdio(FILE* fp);
-    virtual ~DataReaderFromStdio();
+
+    class DataReaderFromStdio : public DataReader {
+    public:
+        DataReaderFromStdio(FILE *fp);
 
 #if NCNN_STRING
-    virtual int scan(const char* format, void* p) const;
+
+        virtual int scan(const char *format, void *p) const;
+
 #endif // NCNN_STRING
-    virtual size_t read(void* buf, size_t size) const;
 
-private:
-    DataReaderFromStdio(const DataReaderFromStdio&);
-    DataReaderFromStdio& operator=(const DataReaderFromStdio&);
+        virtual size_t read(void *buf, size_t size) const;
 
-private:
-    DataReaderFromStdioPrivate* const d;
-};
+    protected:
+        FILE *fp;
+    };
+
 #endif // NCNN_STDIO
 
-class DataReaderFromMemoryPrivate;
-class NCNN_EXPORT DataReaderFromMemory : public DataReader
-{
-public:
-    explicit DataReaderFromMemory(const unsigned char*& mem);
-    virtual ~DataReaderFromMemory();
+    class DataReaderFromMemory : public DataReader {
+    public:
+        DataReaderFromMemory(const unsigned char *&mem);
 
 #if NCNN_STRING
-    virtual int scan(const char* format, void* p) const;
+
+        virtual int scan(const char *format, void *p) const;
+
 #endif // NCNN_STRING
-    virtual size_t read(void* buf, size_t size) const;
-    virtual size_t reference(size_t size, const void** buf) const;
 
-private:
-    DataReaderFromMemory(const DataReaderFromMemory&);
-    DataReaderFromMemory& operator=(const DataReaderFromMemory&);
+        virtual size_t read(void *buf, size_t size) const;
 
-private:
-    DataReaderFromMemoryPrivate* const d;
-};
+    protected:
+        const unsigned char *&mem;
+    };
 
-#if NCNN_PLATFORM_API
 #if __ANDROID_API__ >= 9
-class DataReaderFromAndroidAssetPrivate;
-class NCNN_EXPORT DataReaderFromAndroidAsset : public DataReader
-{
-public:
-    explicit DataReaderFromAndroidAsset(AAsset* asset);
-    virtual ~DataReaderFromAndroidAsset();
+    class DataReaderFromAndroidAsset : public DataReader
+    {
+    public:
+        DataReaderFromAndroidAsset(AAsset* asset);
 
 #if NCNN_STRING
-    virtual int scan(const char* format, void* p) const;
+        virtual int scan(const char* format, void* p) const;
 #endif // NCNN_STRING
-    virtual size_t read(void* buf, size_t size) const;
+        virtual size_t read(void* buf, size_t size) const;
 
-private:
-    DataReaderFromAndroidAsset(const DataReaderFromAndroidAsset&);
-    DataReaderFromAndroidAsset& operator=(const DataReaderFromAndroidAsset&);
-
-private:
-    DataReaderFromAndroidAssetPrivate* const d;
-};
+    protected:
+        AAsset* asset;
+        mutable const unsigned char* mem;
+    };
 #endif // __ANDROID_API__ >= 9
-#endif // NCNN_PLATFORM_API
 
 } // namespace ncnn
 

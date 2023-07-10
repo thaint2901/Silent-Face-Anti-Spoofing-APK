@@ -22,51 +22,59 @@
 
 namespace ncnn {
 
-class DataReader;
-class Net;
-class ParamDictPrivate;
-class NCNN_EXPORT ParamDict
-{
-public:
-    // empty
-    ParamDict();
+    class DataReader;
 
-    virtual ~ParamDict();
+    class Net;
 
-    // copy
-    ParamDict(const ParamDict&);
+    class ParamDict {
+    public:
+        // empty
+        ParamDict();
 
-    // assign
-    ParamDict& operator=(const ParamDict&);
+        // get int
+        int get(int id, int def) const;
 
-    // get type
-    int type(int id) const;
+        // get float
+        float get(int id, float def) const;
 
-    // get int
-    int get(int id, int def) const;
-    // get float
-    float get(int id, float def) const;
-    // get array
-    Mat get(int id, const Mat& def) const;
+        // get array
+        Mat get(int id, const Mat &def) const;
 
-    // set int
-    void set(int id, int i);
-    // set float
-    void set(int id, float f);
-    // set array
-    void set(int id, const Mat& v);
+        // set int
+        void set(int id, int i);
 
-protected:
-    friend class Net;
+        // set float
+        void set(int id, float f);
 
-    void clear();
+        // set array
+        void set(int id, const Mat &v);
 
-    int load_param(const DataReader& dr);
-    int load_param_bin(const DataReader& dr);
+    protected:
+        friend class Net;
 
-private:
-    ParamDictPrivate* const d;
-};
+        void clear();
+
+        int load_param(const DataReader &dr);
+
+        int load_param_bin(const DataReader &dr);
+
+    protected:
+        struct {
+            // 0 = null
+            // 1 = int/float
+            // 2 = int
+            // 3 = float
+            // 4 = array of int/float
+            // 5 = array of int
+            // 6 = array of float
+            int type;
+            union {
+                int i;
+                float f;
+            };
+            Mat v;
+        } params[NCNN_MAX_PARAM_COUNT];
+    };
 
 } // namespace ncnn
 

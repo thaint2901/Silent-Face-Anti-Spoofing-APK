@@ -19,61 +19,47 @@
 
 namespace ncnn {
 
-class DataReader;
-class NCNN_EXPORT ModelBin
-{
-public:
-    ModelBin();
-    virtual ~ModelBin();
-    // element type
-    // 0 = auto
-    // 1 = float32
-    // 2 = float16
-    // 3 = int8
-    // load vec
-    virtual Mat load(int w, int type) const;
-    // load image
-    virtual Mat load(int w, int h, int type) const;
-    // load dim
-    virtual Mat load(int w, int h, int c, int type) const;
-    // load cube
-    virtual Mat load(int w, int h, int d, int c, int type) const;
-};
+    class DataReader;
 
-class ModelBinFromDataReaderPrivate;
-class NCNN_EXPORT ModelBinFromDataReader : public ModelBin
-{
-public:
-    explicit ModelBinFromDataReader(const DataReader& dr);
-    virtual ~ModelBinFromDataReader();
+    class ModelBin {
+    public:
+        virtual ~ModelBin();
 
-    virtual Mat load(int w, int type) const;
+        // element type
+        // 0 = auto
+        // 1 = float32
+        // 2 = float16
+        // 3 = int8
+        // load vec
+        virtual Mat load(int w, int type) const = 0;
 
-private:
-    ModelBinFromDataReader(const ModelBinFromDataReader&);
-    ModelBinFromDataReader& operator=(const ModelBinFromDataReader&);
+        // load image
+        virtual Mat load(int w, int h, int type) const;
 
-private:
-    ModelBinFromDataReaderPrivate* const d;
-};
+        // load dim
+        virtual Mat load(int w, int h, int c, int type) const;
+    };
 
-class ModelBinFromMatArrayPrivate;
-class NCNN_EXPORT ModelBinFromMatArray : public ModelBin
-{
-public:
-    // construct from weight blob array
-    explicit ModelBinFromMatArray(const Mat* weights);
-    virtual ~ModelBinFromMatArray();
+    class ModelBinFromDataReader : public ModelBin {
+    public:
+        ModelBinFromDataReader(const DataReader &dr);
 
-    virtual Mat load(int w, int type) const;
+        virtual Mat load(int w, int type) const;
 
-private:
-    ModelBinFromMatArray(const ModelBinFromMatArray&);
-    ModelBinFromMatArray& operator=(const ModelBinFromMatArray&);
+    protected:
+        const DataReader &dr;
+    };
 
-private:
-    ModelBinFromMatArrayPrivate* const d;
-};
+    class ModelBinFromMatArray : public ModelBin {
+    public:
+        // construct from weight blob array
+        ModelBinFromMatArray(const Mat *weights);
+
+        virtual Mat load(int w, int type) const;
+
+    protected:
+        mutable const Mat *weights;
+    };
 
 } // namespace ncnn
 

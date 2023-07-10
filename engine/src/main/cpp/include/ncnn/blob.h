@@ -15,29 +15,30 @@
 #ifndef NCNN_BLOB_H
 #define NCNN_BLOB_H
 
-#include "mat.h"
+#include <string>
+#include <vector>
 #include "platform.h"
+#include "mat.h"
 
 namespace ncnn {
 
-class NCNN_EXPORT Blob
-{
-public:
-    // empty
-    Blob();
+    class Blob {
+    public:
+        // empty
+        Blob();
 
-public:
+    public:
 #if NCNN_STRING
-    // blob name
-    std::string name;
+        // blob name
+        std::string name;
 #endif // NCNN_STRING
-    // layer index which produce this blob as output
-    int producer;
-    // layer index which need this blob as input
-    int consumer;
-    // shape hint
-    Mat shape;
-};
+        // layer index which produce this blob as output
+        int producer;
+        // layer index which need this blob as input
+        std::vector<int> consumers;
+        // shape hint
+        Mat shape;
+    };
 
 } // namespace ncnn
 
