@@ -17,13 +17,13 @@
 
 namespace ncnn {
 
-    namespace LayerType {
-        enum LayerType {
+namespace LayerType {
+enum LayerType
+{
 #include "layer_type_enum.h"
-
-            CustomBit = (1 << 8),
-        };
-    } // namespace LayerType
+    CustomBit = (1 << 8),
+};
+} // namespace LayerType
 
 } // namespace ncnn
 

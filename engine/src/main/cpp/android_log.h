@@ -5,13 +5,20 @@
 #ifndef LIVEBODYEXAMPLE_ANDROID_LOG_H
 #define LIVEBODYEXAMPLE_ANDROID_LOG_H
 
+#if __ANDROID_API__ >= 9
 #include <android/log.h>
 
 #define LOG_TAG     "Engine"
-
 #define LOG_INFO(...)       __android_log_print(ANDROID_LOG_INFO,   LOG_TAG, __VA_ARGS__)
 #define LOG_DEBUG(...)      __android_log_print(ANDROID_LOG_DEBUG,  LOG_TAG, __VA_ARGS__)
 #define LOG_WARN(...)       __android_log_print(ANDROID_LOG_WARN,   LOG_TAG, __VA_ARGS__)
 #define LOG_ERR(...)        __android_log_print(ANDROID_LOG_ERROR,  LOG_TAG, __VA_ARGS__)
+
+#else
+#define LOG_INFO(...)       printf(__VA_ARGS__)
+#define LOG_WARN(...)       printf(__VA_ARGS__)
+#define LOG_ERR(...)        printf(__VA_ARGS__)
+#define LOG_DEBUG(...)      printf(__VA_ARGS__)
+#endif
 
 #endif //LIVEBODYEXAMPLE_ANDROID_LOG_H

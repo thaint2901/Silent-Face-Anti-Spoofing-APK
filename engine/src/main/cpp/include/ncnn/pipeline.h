@@ -15,89 +15,97 @@
 #ifndef NCNN_PIPELINE_H
 #define NCNN_PIPELINE_H
 
-#include "platform.h"
 #include "mat.h"
-
+#include "platform.h"
 #if NCNN_VULKAN
-#include <vulkan/vulkan.h>
 #include "gpu.h"
+
+#include <vulkan/vulkan.h>
 #endif // NCNN_VULKAN
 
 namespace ncnn {
 
 #if NCNN_VULKAN
-    class Option;
-    class Pipeline
-    {
-    public:
-        Pipeline(const VulkanDevice* vkdev);
-        virtual ~Pipeline();
+class Option;
+class PipelinePrivate;
+class NCNN_EXPORT Pipeline
+{
+public:
+    explicit Pipeline(const VulkanDevice* vkdev);
+    virtual ~Pipeline();
 
-    public:
-        void set_optimal_local_size_xyz(int w = 4, int h = 4, int c = 4);
-        void set_optimal_local_size_xyz(const Mat& local_size_xyz);
-        void set_local_size_xyz(int w, int h, int c);
+public:
+    void set_optimal_local_size_xyz(int w = 4, int h = 4, int c = 4);
+    void set_optimal_local_size_xyz(const Mat& local_size_xyz);
+    void set_local_size_xyz(int w, int h, int c);
 
-        int create(const uint32_t* spv_data, size_t spv_data_size, const std::vector<vk_specialization_type>& specializations);
+    int create(const uint32_t* spv_data, size_t spv_data_size, const std::vector<vk_specialization_type>& specializations);
 
-        int create(int shader_type_index, const Option& opt, const std::vector<vk_specialization_type>& specializations);
+    int create(int shader_type_index, const Option& opt, const std::vector<vk_specialization_type>& specializations);
 
-        int create(VkShaderModule shader_module, const std::vector<vk_specialization_type>& specializations, int binding_count, int push_constant_count);
+public:
+    VkShaderModule shader_module() const;
+    VkDescriptorSetLayout descriptorset_layout() const;
+    VkPipelineLayout pipeline_layout() const;
+    VkPipeline pipeline() const;
+    VkDescriptorUpdateTemplateKHR descriptor_update_template() const;
 
-        void destroy();
+    const ShaderInfo& shader_info() const;
 
-    protected:
-        int create_descriptorset_layout(int binding_count);
-        int create_pipeline_layout(int push_constant_count);
-        int create_pipeline(VkShaderModule shader_module, const std::vector<vk_specialization_type>& specializations);
-        int create_descriptor_update_template(int binding_count);
+    uint32_t local_size_x() const;
+    uint32_t local_size_y() const;
+    uint32_t local_size_z() const;
 
-    public:
-        const VulkanDevice* vkdev;
+protected:
+    void set_shader_module(VkShaderModule shader_module);
+    void set_descriptorset_layout(VkDescriptorSetLayout descriptorset_layout);
+    void set_pipeline_layout(VkPipelineLayout pipeline_layout);
+    void set_pipeline(VkPipeline pipeline);
+    void set_descriptor_update_template(VkDescriptorUpdateTemplateKHR descriptor_update_template);
 
-        // local shader module
-        VkShaderModule local_shader_module;
+    void set_shader_info(const ShaderInfo& shader_info);
 
-        VkDescriptorSetLayout descriptorset_layout;
-        VkPipelineLayout pipeline_layout;
+public:
+    const VulkanDevice* vkdev;
 
-        // op forward TODO use pipeline cache ?
-        VkPipeline pipeline;
+private:
+    Pipeline(const Pipeline&);
+    Pipeline& operator=(const Pipeline&);
 
-        VkDescriptorUpdateTemplateKHR descriptor_update_template;
+private:
+    PipelinePrivate* const d;
+};
 
-        uint32_t local_size_x;
-        uint32_t local_size_y;
-        uint32_t local_size_z;
-    };
-
+#if NCNN_PLATFORM_API
 #if __ANDROID_API__ >= 26
-    class VkCompute;
-    class ImportAndroidHardwareBufferPipeline : private Pipeline
-    {
-    public:
-        ImportAndroidHardwareBufferPipeline(const VulkanDevice* vkdev);
-        ~ImportAndroidHardwareBufferPipeline();
+class VkCompute;
+class NCNN_EXPORT ImportAndroidHardwareBufferPipeline : private Pipeline
+{
+public:
+    explicit ImportAndroidHardwareBufferPipeline(const VulkanDevice* vkdev);
+    virtual ~ImportAndroidHardwareBufferPipeline();
 
-        int create(VkAndroidHardwareBufferImageAllocator* ahb_im_allocator, int type_to, int rotate_from, const Option& opt);
-        int create(VkAndroidHardwareBufferImageAllocator* ahb_im_allocator, int type_to, int rotate_from, int target_width, int target_height, const Option& opt);
-        void destroy();
+    int create(VkAndroidHardwareBufferImageAllocator* ahb_im_allocator, int type_to, int rotate_from, const Option& opt);
+    int create(VkAndroidHardwareBufferImageAllocator* ahb_im_allocator, int type_to, int rotate_from, int target_width, int target_height, const Option& opt);
+    void destroy();
 
-        friend class VkCompute;
+    friend class VkCompute;
 
-    protected:
-        int create_sampler(VkAndroidHardwareBufferImageAllocator* ahb_im_allocator);
-        int create_descriptorset_layout();
-        int create_descriptor_update_template();
+protected:
+    int create_shader_module(const Option& opt);
+    int create_sampler(VkAndroidHardwareBufferImageAllocator* ahb_im_allocator);
+    int create_descriptorset_layout();
 
-    public:
-        int type_to;
-        int rotate_from;
-        bool need_resize;
+public:
+    int type_to;
+    int rotate_from;
+    bool need_resize;
 
-        VkSampler sampler;
-    };
+    VkSampler sampler;
+};
 #endif // __ANDROID_API__ >= 26
+#endif // NCNN_PLATFORM_API
+
 #endif // NCNN_VULKAN
 
 } // namespace ncnn

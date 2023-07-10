@@ -20,10 +20,15 @@ set_target_properties(opencv_codecs PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURC
 
 file(GLOB jni_srcs
         "*.cpp"
-        "detection/*.cpp"
-        "live/*.cpp"
     )
+
+add_library(faceprocess STATIC
+        faceprocess/face_detector.cpp
+        faceprocess/live.cpp)
+target_link_libraries(faceprocess PRIVATE
+        ncnn opencv_core opencv_imgproc opencv_codecs)
 
 add_library(engine SHARED ${jni_srcs})
 
-target_link_libraries(engine log jnigraphics ncnn opencv_core opencv_imgproc opencv_codecs android)
+target_link_libraries(engine faceprocess
+        log jnigraphics ncnn opencv_core opencv_imgproc opencv_codecs android)

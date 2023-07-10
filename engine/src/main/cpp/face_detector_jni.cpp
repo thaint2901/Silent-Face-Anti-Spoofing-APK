@@ -3,8 +3,8 @@
 //
 
 #include "jni_long_field.h"
-#include "definition.h"
-#include "detection/face_detector.h"
+#include "faceprocess/definition.h"
+#include "faceprocess/face_detector.h"
 #include "img_process.h"
 #include <android/asset_manager_jni.h>
 

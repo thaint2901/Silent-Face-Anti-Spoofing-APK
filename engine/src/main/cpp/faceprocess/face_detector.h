@@ -6,8 +6,9 @@
 #define LIVEBODYEXAMPLE_FACE_DETECTOR_H
 
 #include <opencv2/core/mat.hpp>
-#include "../include/ncnn/net.h"
-#include "../definition.h"
+#include "ncnn/net.h"
+
+#include "definition.h"
 
 
 class FaceDetector {
@@ -18,7 +19,11 @@ public:
 
     void SetMinFaceSize(int size);
 
+#if __ANDROID_API__ >= 9
     int LoadModel(AAssetManager* assetManager);
+#else
+    int LoadModel(const char* emb_model_bin, const char* emb_model_param);
+#endif
 
     int Detect(cv::Mat& src, std::vector<FaceBox>& boxes);
 

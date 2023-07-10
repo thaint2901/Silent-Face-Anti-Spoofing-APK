@@ -3,6 +3,7 @@
 //
 
 #include <ncnn/cpu.h>
+
 #include "face_detector.h"
 #include "../android_log.h"
 
@@ -25,6 +26,7 @@ void FaceDetector::SetMinFaceSize(int size) {
     min_face_size_ = size;
 }
 
+#if __ANDROID_API__ >= 9
 int FaceDetector::LoadModel(AAssetManager* assetManager) {
     net_.opt = option_;
     int ret = net_.load_param(assetManager, "detection/detection.param");
@@ -40,6 +42,23 @@ int FaceDetector::LoadModel(AAssetManager* assetManager) {
     }
     return 0;
 }
+#else
+int FaceDetector::LoadModel(const char* emb_model_bin, const char* emb_model_param) {
+    net_.opt = option_;
+    int ret = net_.load_param(emb_model_param);
+    if(ret != 0) {
+        LOG_ERR("FaceDetector load param failed. %d\n", ret);
+        return -1;
+    }
+
+    ret = net_.load_model(emb_model_bin);
+    if(ret != 0) {
+        LOG_ERR("FaceDetector load model failed. %d", ret);
+        return -2;
+    }
+    return 0;
+}
+#endif
 
 
 int FaceDetector::Detect(cv::Mat &src, std::vector<FaceBox> &boxes) {
