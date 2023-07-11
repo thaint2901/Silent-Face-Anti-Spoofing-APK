@@ -25,6 +25,13 @@ struct FaceBox {
     float y2;
 };
 
+struct FaceObject
+{
+    cv::Rect_<float> rect;
+    cv::Point2f landmark[5];
+    float prob;
+};
+
 struct ModelConfig {
     float scale;
     float shift_x;

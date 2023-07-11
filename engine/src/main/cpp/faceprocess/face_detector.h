@@ -17,15 +17,15 @@ public:
 
     ~FaceDetector();
 
-    void SetMinFaceSize(int size);
+    void setMinFaceSize(int size);
 
 #if __ANDROID_API__ >= 9
-    int LoadModel(AAssetManager* assetManager);
+    int loadModel(AAssetManager* assetManager);
 #else
-    int LoadModel(const char* emb_model_bin, const char* emb_model_param);
+    int loadModel(const char* emb_model_bin, const char* emb_model_param);
 #endif
 
-    int Detect(cv::Mat& src, std::vector<FaceBox>& boxes);
+    int detect(cv::Mat& src, std::vector<FaceBox>& boxes);
 
 private:
     ncnn::Net net_;

@@ -3,6 +3,7 @@
 //
 
 #include <ncnn/cpu.h>
+#include <chrono>
 
 #include "face_detector.h"
 #include "../android_log.h"
@@ -22,7 +23,7 @@ FaceDetector::~FaceDetector() {
     net_.clear();
 }
 
-void FaceDetector::SetMinFaceSize(int size) {
+void FaceDetector::setMinFaceSize(int size) {
     min_face_size_ = size;
 }
 
@@ -43,7 +44,7 @@ int FaceDetector::LoadModel(AAssetManager* assetManager) {
     return 0;
 }
 #else
-int FaceDetector::LoadModel(const char* emb_model_bin, const char* emb_model_param) {
+int FaceDetector::loadModel(const char* emb_model_bin, const char* emb_model_param) {
     net_.opt = option_;
     int ret = net_.load_param(emb_model_param);
     if(ret != 0) {
@@ -61,7 +62,8 @@ int FaceDetector::LoadModel(const char* emb_model_bin, const char* emb_model_par
 #endif
 
 
-int FaceDetector::Detect(cv::Mat &src, std::vector<FaceBox> &boxes) {
+int FaceDetector::detect(cv::Mat &src, std::vector<FaceBox> &boxes) {
+    auto c_detect = std::chrono::steady_clock::now();
     int w = src.cols;
     int h = src.rows;
 
@@ -117,5 +119,9 @@ int FaceDetector::Detect(cv::Mat &src, std::vector<FaceBox> &boxes) {
 
     // sort
     std::sort(boxes.begin(), boxes.end(), AreaComp);
+
+    auto c_end = std::chrono::steady_clock::now();
+    float t_detect = std::chrono::duration_cast <std::chrono::milliseconds> (c_end - c_detect).count();
+    LOG_INFO("detect time: %.3f ms", t_detect);
     return 0;
 }
