@@ -17,22 +17,22 @@ int main(int argc, char **argv) {
   VideoCapture cap("rtsp://127.0.0.1:8554/stream1");
   // FaceDetector* detector = new FaceDetector();
   // detector->LoadModel("/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/detection.bin", "//research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/detection.param");
-  // SCRFD* detector = new SCRFD();
-  // detector->load_model(
-  //   "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/scrfd_500m_kps-opt2.bin",
-  //   "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/scrfd_500m_kps-opt2.param"
-  // );
+  SCRFD* detector = new SCRFD();
+  detector->loadModel(
+    "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/scrfd_500m_kps-opt2.bin",
+    "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/scrfd_500m_kps-opt2.param"
+  );
   // RetinaFace* detector = new RetinaFace();
   // detector->load_model(
   //   "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/retina/mnet.25-opt.bin",
   //   "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/retina/mnet.25-opt.param"
   // );
-  MTCNN* detector = new MTCNN();
-  detector->loadModel(
-    "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det1.bin", "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det1.param",
-    "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det2.bin", "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det2.param",
-    "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det3.bin", "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det3.param"
-  );
+  // MTCNN* detector = new MTCNN();
+  // detector->loadModel(
+  //   "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det1.bin", "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det1.param",
+  //   "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det2.bin", "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det2.param",
+  //   "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det3.bin", "/research/android/Silent-Face-Anti-Spoofing-APK/engine/src/main/assets/detection/mtcnn/det3.param"
+  // );
 
 
   if (!cap.isOpened()) {
