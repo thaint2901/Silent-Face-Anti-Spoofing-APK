@@ -27,7 +27,7 @@ static bool AreaComp(FaceBox &l, FaceBox &r)
 }
 
 //----------------------------------------------------------------------------------------
-MTCNN::MTCNN(void) {}
+MTCNN::MTCNN() {}
 //----------------------------------------------------------------------------------------
 MTCNN::~MTCNN()
 {
@@ -37,8 +37,44 @@ MTCNN::~MTCNN()
 }
 
 #if __ANDROID_API__ >= 9
-int MTCNN::LoadModel(AAssetManager *assetManager)
+int MTCNN::loadModel(AAssetManager *assetManager)
 {
+  ncnn::set_cpu_powersave(2);
+  ncnn::Option option_;
+  option_.lightmode = true;
+  option_.num_threads = 2;
+
+  int ret = 0;
+  Pnet.opt = option_;
+  ret += Pnet.load_param(assetManager, "detection/mtcnn/det1.param");
+  ret += Pnet.load_model(assetManager, "detection/mtcnn/det1.bin");
+  Rnet.opt = option_;
+  ret += Rnet.load_param(assetManager, "detection/mtcnn/det2.param");
+  ret += Rnet.load_model(assetManager, "detection/mtcnn/det2.bin");
+  Onet.opt = option_;
+  ret += Onet.load_param(assetManager, "detection/mtcnn/det3.param");
+  ret += Onet.load_model(assetManager, "detection/mtcnn/det3.bin");
+
+  if(ret != 0) {
+    LOG_ERR("MTCNN load model failed. %d", ret);
+    return -1;
+  }
+
+  return 0;
+
+
+//  int ret = net_.load_param(assetManager, "detection/detection.param");
+//  if(ret != 0) {
+//      LOG_ERR("FaceDetector load param failed. %d", ret);
+//      return -1;
+//  }
+//
+//  ret = net_.load_model(assetManager, "detection/detection.bin");
+//  if(ret != 0) {
+//      LOG_ERR("FaceDetector load model failed. %d", ret);
+//      return -2;
+//  }
+//  return 0;
 }
 #else
 int MTCNN::loadModel(
@@ -391,7 +427,7 @@ int MTCNN::detect(cv::Mat &bgr, std::vector<FaceBox> &boxes)
   auto c_detect = std::chrono::steady_clock::now();
   int width = bgr.cols;
   int height = bgr.rows;
-  const int target_size = 320;
+  const int target_size = 192;
   int w = width;
   int h = height;
   float scale = 1.f;

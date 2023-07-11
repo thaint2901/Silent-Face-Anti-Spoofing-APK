@@ -28,7 +28,7 @@ void FaceDetector::setMinFaceSize(int size) {
 }
 
 #if __ANDROID_API__ >= 9
-int FaceDetector::LoadModel(AAssetManager* assetManager) {
+int FaceDetector::loadModel(AAssetManager* assetManager) {
     net_.opt = option_;
     int ret = net_.load_param(assetManager, "detection/detection.param");
     if(ret != 0) {

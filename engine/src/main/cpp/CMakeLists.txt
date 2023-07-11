@@ -23,7 +23,7 @@ file(GLOB jni_srcs
     )
 
 add_library(faceprocess STATIC
-        faceprocess/face_detector.cpp
+        faceprocess/mtcnn.cpp
         faceprocess/live.cpp)
 target_link_libraries(faceprocess PRIVATE
         ncnn opencv_core opencv_imgproc opencv_codecs)

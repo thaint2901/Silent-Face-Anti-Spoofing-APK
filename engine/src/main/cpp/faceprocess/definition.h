@@ -6,6 +6,7 @@
 #define LIVEBODYEXAMPLE_DEFINITION_H
 
 #include <string>
+#include <opencv2/core/mat.hpp>
 
 #define JAVA_ARRAY_LIST_CLASSPATH           "java/util/ArrayList"
 #define ANDROID_FACE_BOX_CLASSPATH          "com/mv/engine/FaceBox"

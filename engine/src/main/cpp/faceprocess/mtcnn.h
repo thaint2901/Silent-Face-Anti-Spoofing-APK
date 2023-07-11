@@ -63,7 +63,7 @@ private:
   const int MIN_DET_SIZE = 12;
   std::vector<Bbox> firstPreviousBbox_, secondPreviousBbox_, thirdPrevioussBbox_;
   std::vector<Bbox> firstBbox_, secondBbox_, thirdBbox_;
-  int img_w, img_h;
+  int img_w{}, img_h{};
 
 public:
   MTCNN();

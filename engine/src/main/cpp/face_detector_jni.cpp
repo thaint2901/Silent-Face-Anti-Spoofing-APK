@@ -4,20 +4,20 @@
 
 #include "jni_long_field.h"
 #include "faceprocess/definition.h"
-#include "faceprocess/face_detector.h"
+#include "faceprocess/mtcnn.h"
 #include "img_process.h"
 #include <android/asset_manager_jni.h>
 
 
 JniLongField face_detector_field("nativeHandler");
 
-FaceDetector* get_face_detector(JNIEnv* env, jobject instance) {
-    FaceDetector* const detector =
-            reinterpret_cast<FaceDetector*>(face_detector_field.get(env, instance));
+MTCNN* get_face_detector(JNIEnv* env, jobject instance) {
+    MTCNN* const detector =
+            reinterpret_cast<MTCNN*>(face_detector_field.get(env, instance));
     return detector;
 }
 
-void set_face_detector(JNIEnv* env, jobject instance, FaceDetector* detector) {
+void set_face_detector(JNIEnv* env, jobject instance, MTCNN* detector) {
     face_detector_field.set(env, instance, reinterpret_cast<intptr_t>(detector));
 }
 
@@ -79,7 +79,7 @@ jobject ConvertFaceBoxVector2List(JNIEnv *env, std::vector<FaceBox>& boxes) {
 
 JNIEXPORT jlong JNICALL
 FACE_DETECTOR_METHOD(allocate)(JNIEnv *env, jobject instance) {
-    auto * const detector = new FaceDetector();
+    auto * const detector = new MTCNN();
     set_face_detector(env, instance, detector);
     return reinterpret_cast<intptr_t> (detector);
 }
@@ -95,7 +95,7 @@ FACE_DETECTOR_METHOD(deallocate)(JNIEnv *env, jobject instance) {
 JNIEXPORT jint JNICALL
 FACE_DETECTOR_METHOD(nativeLoadModel)(JNIEnv *env, jobject instance, jobject assets_manager) {
     AAssetManager* mgr = AAssetManager_fromJava(env, assets_manager);
-    return get_face_detector(env, instance)->LoadModel(mgr);
+    return get_face_detector(env, instance)->loadModel(mgr);
 }
 
 JNIEXPORT jobject JNICALL
@@ -106,7 +106,7 @@ FACE_DETECTOR_METHOD(nativeDetectBitmap)(JNIEnv *env, jobject instance, jobject 
         return nullptr;
 
     std::vector<FaceBox> boxes;
-    get_face_detector(env, instance)->Detect(img, boxes);
+    get_face_detector(env, instance)->detect(img, boxes);
 
     AndroidBitmap_unlockPixels(env, bitmap);
 
@@ -124,7 +124,7 @@ FACE_DETECTOR_METHOD(nativeDetectYuv)(JNIEnv *env, jobject instance, jbyteArray 
     Yuv420sp2bgr(reinterpret_cast<unsigned char *>(yuv_), preview_width, preview_height, orientation, bgr);
 
     std::vector<FaceBox> boxes;
-    get_face_detector(env, instance)->Detect(bgr, boxes);
+    get_face_detector(env, instance)->detect(bgr, boxes);
 
     env->ReleaseByteArrayElements(yuv, yuv_, 0);
 
